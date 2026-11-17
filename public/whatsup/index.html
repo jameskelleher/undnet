@@ -1,0 +1,39 @@
+<html>
+
+<body>
+    <div>here's what's up</div>
+    <button id="events">get latest</button>
+    <ul id="results"></ul>
+
+    <script>
+        let button = document.getElementById('events');
+        let results = document.getElementById('results');
+
+        button.addEventListener('click', async () => {
+            results.innerHTML = '';
+
+            try {
+                let url = 'https://data.cityofnewyork.us/resource/erm2-nwe9.json' +
+                    '?$order=created_date DESC&$limit=20';
+                let res = await fetch(url);
+                if (!res.ok) {
+                    console.log('fetch failed');
+                }
+
+                let items = await res.json();
+
+                for (let item of items) {
+                    const li = document.createElement('li');
+                    li.textContent = 
+                        `${item.created_date} | ${item.complaint_type} | ` +
+                        `${item.borough} | ${item.incident_address ?? 'no addres'}`;
+                    results.appendChild(li); 
+                }
+            } catch (err) {
+                console.log(`error: ${err.message}`);
+            }
+        });
+    </script>
+</body>
+
+</html>
