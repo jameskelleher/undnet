@@ -31,6 +31,20 @@ app.get('/get', (req, res) => {
   res.send('api get!\n');
 });
 
+app.get('/api/311/recent', async (req, res) => {
+  try {
+    const url = 'https://data.cityofnewyork.us/resource/erm2-nwe9.json' +
+      '?$order=created_date DESC&$limit=20';
+    const response = await fetch(url);
+    if (!response.ok) {
+      return res.status(response.status).json({ error: 'Upstream failed' });
+    }
+    res.json(await response.json());
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch 311 data' });
+  }
+});
+
 let server = app.listen(3000, () => {
   let port = server.address().port;
   console.log(`server listening on port ${port}`);
